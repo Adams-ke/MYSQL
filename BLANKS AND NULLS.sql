@@ -1,0 +1,61 @@
+##  WE SHALL TAKE A GLANCE FIRST AT WHAT WE ARE WORKING WITH 
+SELECT * 
+FROM layoffs_staging1
+ORDER BY 1 ;
+
+## THE INDUSTRY TOO HAD A BLANK WE HAVE TO TAKE CARE OF IT SINCE WE HAVE TO POPULATE, TO OUR BEST ABILITY, ALL BLANKS OR NULLS USING WHAT IS IN THE TABLE 
+
+SELECT DISTINCT industry
+FROM layoffs_staging1;
+
+## LOKING AT ALL OF THE RECORDS THAT CONTAIN NULLS AND BLANKS 
+
+SELECT *
+FROM layoffs_staging1
+WHERE industry IS NULL
+OR industry = '';
+
+# STARTING WITH AIRBNB 
+SELECT *
+FROM layoffs_staging1
+WHERE company = 'Airbnb';
+## this was to check if there were any other airbnb's that had the industry column filled 
+ 
+ ## YOU SHOULD NOTE THAT THERE ARE BOTH NULLS AND BLANKS IN THE INDUSTRY COLUMN 
+ ## WE WANT TO CHANGE THE BLANKS INTO NULLS FOR  EASY QUERRYING
+ 
+ UPDATE layoffs_staging1
+ SET industry = NULL
+ WHERE industry ='';
+ 
+ ## TO FILL IN THE NULLS IN THE INDUSTRY COLUMN WE HAVE TO DO A SELF JOIN IN AN UPDATE STETEMENT BUT WE HAVE TO DO A SELECT STATEMENT FIRST TO CHECK 
+ 
+ SELECT t1.company, t1.industry, t2.industry
+ FROM layoffs_staging1 t1
+ JOIN layoffs_staging1 t2
+	 ON t1.company = t2.company
+WHERE (t1.industry IS NULL )
+ AND t2.industry IS NOT NULL;
+
+UPDATE layoffs_staging1 t1
+JOIN layoffs_staging1 t2
+	 ON t1.company = t2.company
+SET t1.industry = t2.industry
+WHERE (t1.industry IS NULL)
+ AND t2.industry IS NOT NULL;
+
+## ALL THE COLUMNS THAT HAD  A SIMILAR RECORDS OF LAYOFFS WERE FILLED EXCEPT BALLY'S
+
+SELECT *
+FROM layoffs_staging1
+WHERE company LIKE 'Bally%';
+
+SELECT *
+FROM layoffs_staging1;
+## THAT WILL CONCLUDE THE FILLING OF NULLS IN THIS PARTICULAR TABLE SINCE THERE IS NO OTHER THAT CAN BE FILLED USING WHAT WE HAVE ON THE TABLE
+
+
+
+
+
+
